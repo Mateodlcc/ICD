@@ -366,14 +366,7 @@
     ],
   )
   #v(5pt)
-  #flow(
-    dblock("D", fill: c-line), arr,
-    dblock("TGATE", fill: c-green), arr,
-    dblock("Latch M", fill: c-blue), arr,
-    dblock("TGATE", fill: c-green), arr,
-    dblock("Latch S", fill: c-blue), arr,
-    dblock("Q", fill: c-line),
-  )
+
 ]
 
 // ============================================================
