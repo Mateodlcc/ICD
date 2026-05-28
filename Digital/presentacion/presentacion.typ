@@ -11,10 +11,10 @@
 #title-slide(
   course: "IEE3753 · Diseño Digital · Proyecto Parte I",
   title: "Filtro de interpolación lineal (L = 4)",
-  subtitle: "Diseño transistor-level en GF180MCU · 3.3 V · corner TT",
+  subtitle: "Diseño a nivel de trasistor en GF180MCU",
   authors: (
     "Mateo de la Cuadra",
-    "Vicente Flores",
+    "Vicente Florez",
     "Alonso Rivera"
   ),
   date: "Mayo 2026",
@@ -26,7 +26,7 @@
 #slide(title: "Estado de este avance", tag: "DISCLAIMER")[
   #panel(title: "Primer avance — la arquitectura aún cambiará")[
     #set text(size: 13pt)
-    Esta presentación documenta un *baseline funcional de 6 bits* ya construido y simulado en LTSpice. Durante el desarrollo identificamos dos decisiones que reestructuran el diseño hacia una versión más óptima:
+    Esta presentación documenta un baseline funcional de 6 bits ya construido y simulado en LTSpice. Durante el desarrollo identificamos dos decisiones que reestructuran el diseño hacia una versión más óptima:
   ]
   #v(5pt)
   #grid(columns: (1fr, 1fr), gutter: 12pt,
@@ -36,8 +36,8 @@
       - Caracterización de delays (TT, 3.3 V, 25 °C).
     ],
     panel(title: "En curso", fill: c-panel, stroke-c: c-accent)[
-      - Muestras de entrada *6 b $->$ 4 b* (menos compuertas y delay).
-      - Mejoras de timing: MUX 3:1, FF intermedios, *pipeline* del CLA, *DFF pulsed*.
+      - Muestras de entrada *6 b $->$ 4 b* (menos compuertas y delay; salida con niveles intermedios).
+      - Mejoras de timing: MUX 3:1, FF intermedios, pipeline del CLA, DFF pulsed.
     ],
   )
   #v(4pt)
@@ -64,7 +64,7 @@
       $x_"old"$, $x_"new"$ y emitir 4 valores equiespaciados. No implementamos
       el FIR literal: generamos directamente las 4 fases.
     ],
-    panel(title: "Las 4 fases de salida")[
+    panel(title: "Las 4 fases de salida (Adaptación de poly phase filter)")[
       #set text(size: 12.5pt)
       $phi_0 = x_"old"$ #h(6pt)\
       $phi_1 = (3 x_"old" + x_"new") \/ 4$ \
@@ -75,6 +75,7 @@
   #v(3pt)
   #panel(title: "Truco aritmético: un solo sumador compartido")[
     #set text(size: 12.5pt)
+    #text(size: 9.5pt)[Footnote: Pensado en implementación 6b $->$ 6b]\
     Definimos $S = x_"old" + x_"new"$ (ADD1) y reutilizamos $S$ en todas las fases:
     $phi_1 = (S + 2x_"old") >> 2$, $phi_2 = (S+1) >> 1$, $phi_3 = (S + 2x_"new") >> 2$.
     El *redondeo* ($+1$, $+2$) se *pliega en el carry-in* (0 sumadores extra); los $2x$ son shifts (cableado).
@@ -88,7 +89,7 @@
 
 #slide(title: "Arquitectura general (top-level)", tag: "PUNTO 2")[
   #grid(columns: (auto, 1fr), column-gutter: 22pt, align: horizon,
-    align(left, framed-image("diag1_toplevel.jpg", height: 8.6cm)),
+    align(left, framed-image("diag1_toplevel.jpg", height: 9.2cm)),
     [
       #set text(size: 12.5pt)
       *Flujo de datos:*
@@ -116,8 +117,8 @@
     panel(title: "1 · Time-multiplexing (1 datapath, no 4)")[
       #set text(size: 12.5pt)
       En vez de 4 caminos en paralelo, *un solo núcleo* calcula las 4 fases y un
-      MUX 4:1 las emite secuencialmente a 4× `i_CK`. Cuesta compuertas ↓↓ a cambio
-      de exigir velocidad al núcleo → de ahí la importancia del CLA.
+      MUX 4:1 las emite secuencialmente a 4× `i_CK`. Cuesta más compuertas a cambio
+      de exigir velocidad al núcleo (importancia del CLA).
     ],
     panel(title: "2 · Sumador compartido + φ0 gratis")[
       #set text(size: 12.5pt)
@@ -130,8 +131,7 @@
     #set text(size: 12.5pt)
     El primer baseline usó *ripple-carry (RCA)*: el carry recorre todos los bits en
     serie → retardo *lineal* O(n) con muchas compuertas en serie. Lo reemplazamos por
-    *carry-lookahead (CLA)*: el carry se calcula en paralelo → retardo ~*logarítmico*,
-    camino crítico mucho más corto. Esto es lo que permite cumplir/superar la
+    *carry-lookahead (CLA)*: el carry se calcula en paralelo, por lo que el camino crítico es mucho más corto. Esto es lo que permite cumplir/superar la
     frecuencia con margen (ver Punto 6).
   ]
 ]
@@ -221,7 +221,7 @@
 #slide(title: "Frecuencia de operación", tag: "PUNTO 6")[
   #grid(columns: (3fr, 2fr), gutter: 14pt,
     [
-      *Camino crítico* (corner TT, 3.3 V, 25 °C) — propagación a través de las etapas de sumadores CLA encadenadas más el flop de captura (sin considerar bloques como MUX o FF):
+      *Camino crítico* (TT, 3.3 V, 25 °C) — propagación a través de las etapas de sumadores CLA encadenadas más el flop de captura (sin considerar bloques como MUX o FF):
       #v(4pt)
       #table(columns: (1fr, auto), inset: 6pt, align: (left, right),
         stroke: 0.5pt + c-line,
@@ -415,9 +415,10 @@
     panel(title: "② MUX 3:1 en etapa rápida")[
       #set text(size: 13.5pt)
       Un MUX 3:1 entre ADD2/ADD3 reduce transistores; a evaluar su impacto en el
-      delay del camino rápido.
+      delay del camino rápido.\
+      Toggle entre φ1/φ3 según `cuenta[1:0]` (si es 01 o 11) y omite φ2 (la fase más lenta).
     ],
-    panel(title: "③ FF entre parte rápida y lenta")[
+    panel(title: "③ Inclusión de FF entre parte rápida y lenta")[
       #set text(size: 13.5pt)
       Desacopla los dominios y acorta el camino crítico combinacional (mejor f_op a
       costa de latencia).
