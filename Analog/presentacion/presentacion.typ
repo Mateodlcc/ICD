@@ -514,7 +514,7 @@
 // ============================================================
 #section-slide("5", "Otros resultados relevantes")
 
-#slide(title: "Métricas de potencia y área pasiva", tag: "PUNTO 5 · 1/3")[
+#slide(title: "Métricas de potencia y área pasiva", tag: "PUNTO 5 · 1/2")[
   #grid(columns: (1fr, 1fr, 1fr), gutter: 10pt,
     kpi("99 / 53 µW", "P_DC (v4 / v2)", color: c-accent),
     kpi("8.1 pF",     "Σ C (≤ 10 pF) ✓", color: c-blue),
@@ -551,15 +551,15 @@
 ]
 
 
-#slide(title: "Limitaciones y trabajo futuro (Parte 2)", tag: "PUNTO 5 · 3/3")[
+#slide(title: "Limitaciones y trabajo futuro (Parte 2)", tag: "PUNTO 5 · 2/2")[
   #panel(title: "Roadmap entrega final / Parte 2")[
     + Mejorar SNR
     + Generar segundo CLK
-    + cerrar lazo
+    + Cerrar lazo de retroalimentación
   ]
   #v(10pt)
   #grid(columns: (1fr, 1fr), gutter: 10pt,
-    kpi("≈ 68 dB", "Av0 v4 (Bode)", color: c-green),
-    kpi("≈ 50 MHz", "GBW v4 (Bode)", color: c-accent),
+    kpi("≈ 67 dB", "Av0 v4 (Bode)", color: c-green),
+    kpi("≈ 32.8 MHz", "GBW v4 (Bode)", color: c-accent),
   )
 ]
