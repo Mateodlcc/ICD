@@ -1,0 +1,201 @@
+* C:\Users\Vicente\Desktop\UC\Semestre 11\Proyectos\ICD\Digital\Components\TestFIR_RACX.asc
+V1 Xold_0 0 PULSE(0.0 3.3 5n 1p 1p 50n 100n 1)
+V2 Xold_1 0 3.3
+V3 Xold_2 0 3.3
+V4 Xold_3 0 3.3
+V5 Xold_4 0 3.3
+V6 Xold_5 0 3.3
+V7 Xnew_0 0 {Xnew_0}
+V8 Xnew_1 0 {Xnew_1}
+V9 Xnew_2 0 {Xnew_2}
+V10 Xnew_3 0 {Xnew_3}
+V11 Xnew_4 0 {Xnew_4}
+V12 Xnew_5 0 {Xnew_5}
+V13 Vdd 0 3.3
+XX1 ck phi0_0 Vdd NC_01 NC_02 dff
+XX3 ck phi0_2 Vdd NC_03 NC_04 dff
+XX4 ck phi0_1 Vdd NC_05 NC_06 dff
+XX5 ck phi0_3 Vdd NC_07 NC_08 dff
+XX6 ck phi1_0 Vdd NC_09 NC_10 dff
+XX7 ck phi1_2 Vdd NC_11 NC_12 dff
+XX8 ck phi1_1 Vdd NC_13 NC_14 dff
+XX9 ck phi1_3 Vdd NC_15 NC_16 dff
+XX10 ck phi2_0 Vdd NC_17 NC_18 dff
+XX11 ck phi2_2 Vdd NC_19 NC_20 dff
+XX12 ck phi2_1 Vdd NC_21 NC_22 dff
+XX13 ck phi2_3 Vdd NC_23 NC_24 dff
+XX14 ck phi3_0 Vdd NC_25 NC_26 dff
+XX15 ck phi3_2 Vdd NC_27 NC_28 dff
+XX16 ck phi3_1 Vdd NC_29 NC_30 dff
+XX17 ck phi3_3 Vdd NC_31 NC_32 dff
+V14 ck 0 PULSE(0 3.3 1n 1p 1p 5n 20n)
+XX2 Vdd Xnew_0 Xnew_1 Xnew_2 Xnew_3 Xnew_4 Xnew_5 Xold_0 Xold_1 Xold_2 Xold_3 Xold_4 Xold_5 phi0_0 phi0_1 phi0_2 phi0_3 phi0_4 phi0_5 phi1_0 phi1_1 phi1_2 phi1_3 phi1_4 phi1_5 phi2_0 phi2_1 phi2_2 phi2_3 phi2_4 phi2_5 phi3_0 phi3_1 phi3_2 phi3_3 phi3_4 phi3_5 fir_cla
+
+* block symbol definitions
+.subckt dff CK D Vdd Q Q_BAR
+XX5 D Vdd N001 0 invx1
+XX1 CK_BAR NC_01 NC_02 CK N002 tgate
+XX2 N002 Vdd N003 0 invx1
+XX3 N003 Vdd N005 0 invx1
+XX4 CK NC_03 NC_04 CK_BAR N002 tgate
+XX6 CK NC_05 NC_06 CK_BAR N004 tgate
+XX7 N004 Vdd Q_BAR 0 invx1
+XX8 Q_BAR Vdd N006 0 invx1
+XX9 CK_BAR NC_07 NC_08 CK N004 tgate
+XX10 Q_BAR Vdd Q 0 invx1
+XX11 CK Vdd CK_BAR 0 invx1
+.ends dff
+
+.subckt fir_cla Vdd Xnew_0 Xnew_1 Xnew_2 Xnew_3 Xnew_4 Xnew_5 Xold_0 Xold_1 Xold_2 Xold_3 Xold_4 Xold_5 phi0_0 phi0_1 phi0_2 phi0_3 phi0_4 phi0_5 phi1_0 phi1_1 phi1_2 phi1_3 phi1_4 phi1_5 phi2_0 phi2_1 phi2_2 phi2_3 phi2_4 phi2_5 phi3_0 phi3_1 phi3_2 phi3_3 phi3_4 phi3_5
+V1 phi0_0 Xold_0 0
+V2 phi0_1 Xold_1 0
+V3 phi0_2 Xold_2 0
+V4 phi0_3 Xold_3 0
+V5 phi0_4 Xold_4 0
+V6 phi0_5 Xold_5 0
+XX1 Xold_0 Xold_1 Xold_2 Xold_3 Xold_4 Xold_5 0 0 Xnew_0 Xnew_1 Xnew_2 Xnew_3 Xnew_4 Xnew_5 0 0 Vdd Vdd NC_01 S1_0 phi2_0 phi2_1 phi2_2 phi2_3 phi2_4 phi2_5 S1_7 cla-8bit
+XX2 S1_0 phi2_0 phi2_1 phi2_2 phi2_3 phi2_4 phi2_5 S1_7 0 Xold_0 Xold_1 Xold_2 Xold_3 Xold_4 Xold_5 0 Vdd Vdd NC_02 S2_0 S2_1 phi1_0 phi1_1 phi1_2 phi1_3 phi1_4 phi1_5 cla-8bit
+XX3 S1_0 phi2_0 phi2_1 phi2_2 phi2_3 phi2_4 phi2_5 S1_7 0 Xnew_0 Xnew_1 Xnew_2 Xnew_3 Xnew_4 Xnew_5 0 Vdd Vdd NC_03 S3_0 S3_1 phi3_0 phi3_1 phi3_2 phi3_3 phi3_4 phi3_5 cla-8bit
+.ends fir_cla
+
+.subckt invx1 A Vdd X Vee
+M1 X A Vee Vee nmos_3p3 l={L} w={Wn}
+M2 Vdd A X Vdd pmos_3p3 l={L} w={Wp}
+.param Wp=3u Wn=1u L=0.28u
+.ends invx1
+
+.subckt tgate A A_bar IN Vdd OUT
+M1 IN A OUT 0 nmos_3p3 l='L' w='Wn' m='M'
+M2 OUT A_bar IN Vdd pmos_3p3 l='L' w='Wp' m='M'
+.param L=0.28u Wn=1u Wp=2u M=1
+.ends tgate
+
+.subckt cla-8bit A_0 A_1 A_2 A_3 A_4 A_5 A_6 A_7 B_0 B_1 B_2 B_3 B_4 B_5 B_6 B_7 Cin Vdd Cout S0 S1 S2 S3 S4 S5 S6 S7
+XX1 A_0 A_1 A_2 A_3 B_0 B_1 B_2 B_3 Cin Vdd 0 N001 S0 S1 S2 S3 cla-4bit
+XX2 A_4 A_5 A_6 A_7 B_4 B_5 B_6 B_7 N001 Vdd 0 Cout S4 S5 S6 S7 cla-4bit
+.ends cla-8bit
+
+.subckt cla-4bit A_0 A_1 A_2 A_3 B_0 B_1 B_2 B_3 Cin Vdd Vee Co_3 S0 S1 S2 S3
+XX32 N002 Vdd N003 Vee invx1
+XX33 N006 Vdd Co_0 Vee invx1
+XX34 N004 Vdd N005 Vee invx1
+XX35 N013 Vdd N014 Vee invx1
+XX36 N010 Vdd N011 Vee invx1
+XX37 N009 Vdd S2 Vee invx1
+XX38 N001 Vdd S3 Vee invx1
+XX39 N015 Vdd S1 Vee invx1
+XX40 N019 Vdd S0 Vee invx1
+XX41 P_0 Cin Vdd N002 Vee nand2x1
+XX42 P_2 G_1 Vdd N004 Vee nand2x1
+XX43 P_3 G_2 Vdd N013 Vee nand2x1
+XX44 P_1 G_0 Vdd N010 Vee nand2x1
+XX45 N003 G_0 Vdd Vee N006 nor2x1
+XX46 P_0 Cin Vdd Vee N019 xnor2x1
+XX47 P_1 Co_0 Vdd Vee N015 xnor2x1
+XX48 P_2 Co_1 Vdd Vee N009 xnor2x1
+XX49 P_3 Co_2 Vdd Vee N001 xnor2x1
+XX5 N014 N016 N017 N018 G_3 Vdd Vee Co_3 5-nor
+XX6 N005 N007 N008 G_2 Vdd Vee Co_2 4-nor
+XX7 N011 N012 G_1 Vdd Vee Co_1 3-nor
+XX8 P_0 P_1 Cin Vdd Vee N012 3-nand
+XX9 P_1 P_2 G_0 Vdd Vee N007 3-nand
+XX10 P_2 P_3 G_1 Vdd Vee N016 3-nand
+XX11 P_0 P_1 P_2 Cin Vdd Vee N008 4-nand
+XX12 P_1 P_2 P_3 G_0 Vdd Vee N017 4-nand
+XX13 P_0 P_1 P_2 P_3 Cin Vdd Vee N018 5-nand
+XX1 A_0 B_0 Vdd Vee G_0 P_0 pg
+XX2 A_1 B_1 Vdd Vee G_1 P_1 pg
+XX3 A_2 B_2 Vdd Vee G_2 P_2 pg
+XX4 A_3 B_3 Vdd Vee G_3 P_3 pg
+.ends cla-4bit
+
+.subckt nand2x1 A B Vdd X Vee
+M1 N001 B Vee Vee nmos_3p3 l={L} w={Wn}
+M3 Vdd A X Vdd pmos_3p3 l={L} w={Wp}
+M4 Vdd B X Vdd pmos_3p3 l={L} w={Wp}
+M2 X A N001 Vee nmos_3p3 l={L} w={Wn}
+.param Wp=3u Wn=2u L=0.28u
+.ends nand2x1
+
+.subckt nor2x1 A B Vdd Vee X
+M1 X B Vee Vee nmos_3p3 l={L} w={Wn}
+M3 N001 A X Vdd pmos_3p3 l={L} w={Wp}
+M4 Vdd B N001 Vdd pmos_3p3 l={L} w={Wp}
+M2 X A Vee Vee nmos_3p3 l={L} w={Wn}
+.param Wp=6u Wn=1u L=0.28u
+.ends nor2x1
+
+.subckt xnor2x1 A B Vdd Vee X
+M1 X B A Vee nmos_3p3 l={L} w={Wn }
+M3 A N001 X Vdd pmos_3p3 l={L} w={Wp}
+XX1 B Vdd N001 Vee invx1
+XX2 A Vdd N002 Vee invx1
+M2 X N001 N002 Vee nmos_3p3 l={L} w={Wn}
+M4 N002 B X Vdd pmos_3p3 l={L} w={Wp}
+.param Wp=3u Wn=1u L=0.28u
+.ends xnor2x1
+
+.subckt 5-nor A B C D E Vdd Vee X
+XX3 N001 E Vdd Vee N002 nor2x1
+XX4 N002 Vdd X Vee invx1
+XX1 A B C D Vdd Vee N001 4-nor
+.ends 5-nor
+
+.subckt 4-nor A B C D Vdd Vee X
+XX5 N001 Vdd N002 Vee invx1
+XX8 N003 Vdd X Vee invx1
+XX9 N005 Vdd N004 Vee invx1
+XX10 A B Vdd Vee N001 nor2x1
+XX11 C D Vdd Vee N005 nor2x1
+XX12 N002 N004 Vdd Vee N003 nor2x1
+.ends 4-nor
+
+.subckt 3-nor A B C Vdd Vee X
+XX1 A B Vdd Vee N001 nor2x1
+XX3 N002 C Vdd Vee N003 nor2x1
+XX5 N001 Vdd N002 Vee invx1
+XX8 N003 Vdd X Vee invx1
+.ends 3-nor
+
+.subckt 3-nand A B C Vdd Vee X
+XX3 N003 Vdd X Vee invx1
+XX4 N001 Vdd N002 Vee invx1
+XX7 A B Vdd N001 Vee nand2x1
+XX8 N002 C Vdd N003 Vee nand2x1
+.ends 3-nand
+
+.subckt 4-nand A B C D Vdd Vee X
+XX7 A B Vdd N001 Vee nand2x1
+XX8 C D Vdd N005 Vee nand2x1
+XX9 N002 N004 Vdd N003 Vee nand2x1
+XX10 N001 Vdd N002 Vee invx1
+XX11 N005 Vdd N004 Vee invx1
+XX12 N003 Vdd X Vee invx1
+.ends 4-nand
+
+.subckt 5-nand A B C D E Vdd Vee X
+XX1 N001 E Vdd N002 Vee nand2x1
+XX2 N002 Vdd X Vee invx1
+XX3 A B C D Vdd Vee N001 4-nand
+.ends 5-nand
+
+.subckt pg A B Vdd Vee G P
+XX5 A B Vdd Vee N001 xnor2x1
+XX6 A B Vdd N002 Vee nand2x1
+XX7 N002 Vdd G Vee invx1
+XX8 N001 Vdd P Vee invx1
+.ends pg
+
+.model NMOS NMOS
+.model PMOS PMOS
+.lib "C:\Users\Vicente\AppData\Local\LTspice\lib\cmp\standard.mos"
+.param Xnew_0=3.3 Xnew_1=0 Xnew_2=0 Xnew_3=0 Xnew_4=0 Xnew_5=0
+.tran 0 10n 0 10p
+.inc "C:\Users\Vicente\Desktop\UC\Semestre 11\Proyectos\ICD\gf180\cmos_tt.txt"
+* Scenario A: x_old 011111->100000, x_new 100000. phi1: 31->32, phi1_5 rises.
+* Scenario B: x_old 000000->000001, x_new 111101. phi1: 15->16, phi1_4 rises.
+* Scenario C: x_old 111110->111111, x_new 000001. phi1: 47->48, phi1_4 rises.
+* Scenario D: x_old 100000->011111, x_new 100000. phi1: 32->31, phi1_5 falls.
+.measure tran tdelay TRIG V(xold_0) VAL=1.65 RISE=1 TARG V(phi1_4) VAL=1.65 RISE=1
+.backanno
+.end

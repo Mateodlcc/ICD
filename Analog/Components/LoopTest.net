@@ -1,0 +1,241 @@
+* C:\Users\Vicente\Desktop\UC\Semestre 11\Proyectos\ICD\Analog\Components\LoopTest.asc
+V1 Vocm_target 0 1.65
+XX1 NC_01 NC_02 NC_03 NC_04 NC_05 NC_06 NC_07 ota_v4
+V2 CK_MASTER 0 PULSE(3.3 3.3 0 1n 1n 50n 100n)
+V3 Vdd 0 3.3
+V4 N001 0 {Vicm} AC 0
+V5 Vip1 N001 {vid/2} AC 0
+V6 N001 Vim1 {vid/2} AC 0
+XX2 Vip1_test Vim1_test Vipx1 Vimx1 Tv_num Tv_den NC_08 NC_09 diff_looptest params: Av=1 Ai=0
+R1 N003 Vip1 100G
+R2 NC_10 Vim1 100G
+XX3 NC_11 NC_12 NC_13 NC_14 NC_15 NC_16 NC_17 ota_v4
+XX4 Vip2_test Vim2_test Vipx2 Vimx2 NC_18 NC_19 Ti_num Ti_den diff_looptest params: Av=0 Ai=1
+R3 NC_20 Vip2 100G
+R4 NC_21 Vim2 100G
+V7 N002 0 {Vicm} AC 0
+V8 Vip2 N002 {vid/2} AC 0
+V9 N002 Vim2 {vid/2} AC 0
+XX5 CK_MASTER Vdd Vim1_test Vip1_test Vocm_target Vipx1 Vimx1 ota_lp
+XX6 CK_MASTER Vdd Vim2_test Vip2_test Vocm_target Vipx2 Vimx2 ota_lp
+
+* block symbol definitions
+.subckt ota_v4 CK_MASTER Vdd Vim Vip Vocm_target Vom Vop
+M1 Vdd vm3 N002 Vdd pmos_3p3 l='Lmirr' w='W5' m=Mcopy_fold
+M2 N002 Vb2 vm3 Vdd pmos_3p3 l='Lcas' w='W3' m=Mcopy_cas
+M3 N006 vm2 0 0 nmos_3p3 l='Lmirr' w='W9' m=Mcopy_cas
+M4 vm2 Vb1 N006 0 nmos_3p3 l='Lcas' w='W7' m=Mcopy_cas
+M5 Vb1 a vm2 0 nmos_3p3 l='Lcas' w='(1/6)*W7' m=Mcopy_cas
+M6 a a Vb1 0 nmos_3p3 l='Lcas' w='W7' m=Mcopy_cas
+M7 vm3 c Vb2 Vdd pmos_3p3 l='Lcas' w='(1/5)*W3' m=Mcopy_cas
+M8 Vb2 c c Vdd pmos_3p3 l='Lcas' w='W3' m=Mcopy_cas
+M9 X Vip N003 0 nmos_3p3 l='Lpair' w='Wpair' m=1
+M10 Y Vim N003 0 nmos_3p3 l='Lpair' w='Wpair' m=1
+M11 N003 vm1 0 0 nmos_3p3 l='Ltail' w='Wtail' m=1
+M12 vm1 vm1 0 0 nmos_3p3 l='Ltail' w='Wtail' m=Mcopy_tail
+M13 Vdd vm3 X Vdd pmos_3p3 l='Lmirr' w='W5' m=1
+M14 X Vb2 Vom Vdd pmos_3p3 l='Lcas' w='W3' m=1
+M15 Vom Vb1 N007 0 nmos_3p3 l='Lcas' w='W7'
+M16 N007 vm2 0 0 nmos_3p3 l='Lmirr' w='a*W9'
+M17 Vdd vm3 Y Vdd pmos_3p3 l='Lmirr' w='W5' m=1
+M18 Y Vb2 Vop Vdd pmos_3p3 l='Lcas' w='W3' m=1
+M19 Vop Vb1 N008 0 nmos_3p3 l='Lcas' w='W7'
+M20 N008 vm2 0 0 nmos_3p3 l='Lmirr' w='a*W9'
+M21 N007 vctr 0 0 nmos_3p3 l='Lmirr' w='(1-a)*W9'
+M22 N008 vctr 0 0 nmos_3p3 l='Lmirr' w='(1-a)*W9'
+C1 Vom 0 100f
+C2 Vop 0 100f
+M23 N005 vm1 0 0 nmos_3p3 l='Ltail' w='Wtail' m=Mcopy_tail
+M24 Vdd N005 N005 Vdd pmos_3p3 l='Lcopy' w='Wcopy_p'
+M25 Vdd N005 a Vdd pmos_3p3 l='Lcopy' w='Wcopy_p'
+M26 c vm1 0 0 nmos_3p3 l='Ltail' w='Wtail' m=Mcopy_tail
+M27 N004 N004 vm1 0 nmos_3p3 l='Ltail' w=2.64u m=3
+M28 Vdd N001 N001 Vdd pmos_3p3 l='Ltail' w='Wcopy_p'
+R3 N001 N004 45833.33
+XX1 CK_MASTER Vdd CK_PHI1 CK_PHI1_BAR CK_PHI2 CK_PHI2_BAR phase_gen
+XX2 CK_PHI1 CK_PHI1_BAR CK_PHI2 CK_PHI2_BAR vm2 Vdd Vocm_target Vom Vop vctr cs_cmfb_v2
+.param Wpair=12.63u Lpair=0.28u
+.param Wtail=2.64u Ltail=4.48u
+.param vid=0 Vicm=1.65
+.inc ..\..\gf180\cmos_tt.txt
+.param W5=22.99u W3=7.92u W7=1.92u W9=3.53u Lmirr=2.24u Lcas=0.84u
+.param Vocm_target=1.65
+.param a=0.7
+.param Lcopy=4.48u Wcopy_p=35.91u
+.param Mn=2 Mp=4 Mcopy_tail=3
+.param Mcopy_cas=3 Mcopy_fold=2
+.ends ota_v4
+
+.subckt diff_looptest xp xm yp ym Tv_Num Tv_Den Ti_Num Ti_Den
+Vyp middp yp AC 'Av'
+Vxm middm xm AC 'Av'
+Vxp middp xp 0
+Vym middm ym 0
+I1 middm middp AC 'Ai'
+B1 Tv_den 0 V='V(xp)-V(xm)'
+B2 Ti_den 0 V='I(Vxp)-I(Vxm)'
+B3 Tv_num 0 V='V(ym)-V(yp)'
+B4 Ti_num 0 V='I(Vyp)-I(Vym)'
+.ends diff_looptest
+
+.subckt ota_lp CK_MASTER Vdd Vim Vip Vocm_target Vom Vop
+M1 X Vip N006 0 nmos_3p3 l='Lpair' w='Wpair' m=1
+M2 Y Vim N006 0 nmos_3p3 l='Lpair' w='Wpair' m=1
+M3 N006 vm1 0 0 nmos_3p3 l='Ltail' w='Wtail/Mtail' m=Mtail
+M4 vm1 vm1 0 0 nmos_3p3 l='Ltail' w='Wtail/Mtail' m=1
+M5 Vdd d X Vdd pmos_3p3 l='Lmirr' w='W5/M1' m='M1'
+M6 X c Vom Vdd pmos_3p3 l='Lcas' w='W3/M2' m='M2'
+M7 Vom Vb1 N007 0 nmos_3p3 l='Lcas' w='W7/M3' m='M3'
+M8 N007 vm2 0 0 nmos_3p3 l='Lmirr' w='a*W9/M3' m='M3'
+M9 Vdd d Y Vdd pmos_3p3 l='Lmirr' w='W5/M1' m='M1'
+M10 Y c Vop Vdd pmos_3p3 l='Lcas' w='W3/M2' m='M2'
+M11 Vop Vb1 N008 0 nmos_3p3 l='Lcas' w='W7/M3' m='M3'
+M12 N008 vm2 0 0 nmos_3p3 l='Lmirr' w='a*W9/M3' m='M3'
+M13 N007 vctr 0 0 nmos_3p3 l='Lmirr' w='(1-a)*W9/M3' m='M3'
+M14 N008 vctr 0 0 nmos_3p3 l='Lmirr' w='(1-a)*W9/M3' m='M3'
+C1 Vom 0 100f
+C2 Vop 0 100f
+I1 N001 N004 500n
+M15 N005 vm1 0 0 nmos_3p3 l='Ltail' w='Wtail/Mtail' m=1
+M16 Vdd N005 N005 Vdd pmos_3p3 l='Lcopy' w='Wcopy_p' m=1
+M17 Vdd N005 Vb1 Vdd pmos_3p3 l='Lcopy' w='Wcopy_p' m=Mp
+M18 c vm1 0 0 nmos_3p3 l='Ltail' w='Wtail/Mtail' m=Mn
+M19 N004 N004 vm1 0 nmos_3p3 l=4.48u w=1u m=1
+M20 Vdd N001 N001 Vdd pmos_3p3 l=4.48u w=1u m=1
+M21 N009 Vb1 0 0 nmos_3p3 l='Lmirr' w='(1/3)*W9/M3'
+M22 Vb1 Vb1 N009 0 nmos_3p3 l='Lcas' w='W7/M3'
+M23 N010 vm2 0 0 nmos_3p3 l='Lmirr' w='W9/M3'
+M24 vm2 Vb1 N010 0 nmos_3p3 l='Lcas' w='W7/M3'
+M25 Vdd c N002 Vdd pmos_3p3 l='Lmirr' w='(1/3)*W5/M1'
+M26 N002 c c Vdd pmos_3p3 l='Lcas' w='W3/M2' m=1
+M27 Vdd d N003 Vdd pmos_3p3 l='Lmirr' w='W5/M1' m=1
+M28 N003 c d Vdd pmos_3p3 l='Lcas' w='W3/M2' m=1
+M29 d vm1 0 0 nmos_3p3 l='Ltail' w='Wtail/Mtail' m=Mn
+M30 Vdd N005 vm2 Vdd pmos_3p3 l='Lcopy' w='Wcopy_p' m=Mp
+XX3 CK_MASTER Vdd CK_PHI1 CK_PHI1_BAR CK_PHI2 CK_PHI2_BAR phase_gen
+XX4 CK_PHI1 CK_PHI1_BAR CK_PHI2 CK_PHI2_BAR vm2 Vdd Vocm_target Vom Vop NC_01 cs_cmfb_v2
+R1 Voc N011 1k
+R2 N012 Voc 1k
+E1 N011 0 Vop 0 1
+E2 N012 0 Vom 0 1
+E3 vctr 0 Voc Vocm_target 30
+.param Wpair=12.63u Lpair=0.28u
+.param Wtail=2.64u Ltail=4.48u Mtail=4
+.param vid=0 Vicm=1.65
+.inc ..\..\gf180\cmos_tt.txt
+.param W5=22.99u W3=7.92u W7=1.92u W9=3.53u Lmirr=2.24u Lcas=0.84u
+.param Vocm_target=1.65
+.param a=0.7
+.param Lcopy=4.48u Wcopy_p=34.48u
+.param Mn=2 Mp=2
+.param M3=2
+.param M1=3 M2=2
+.ends ota_lp
+
+.subckt phase_gen CK Vdd CK1 CK1_BAR CK2 CK2_BAR
+XX1 CK CK2_FB Vdd 0 N001 nor2x1
+XX2 CK Vdd CK_BAR 0 invx1
+XX5 CK_BAR CK1_FB Vdd 0 N006 nor2x1
+XX6 CK2 Vdd N008 0 invx1
+XX7 N008 Vdd N009 0 invx1
+XX8 N001 Vdd CK1_BAR 0 invx1
+XX9 N006 Vdd CK2_BAR 0 invx1
+XX10 N009 Vdd N010 0 invx1
+XX11 N010 Vdd CK2_FB 0 invx1
+XX3 CK1 Vdd N003 0 invx1
+XX4 N003 Vdd N004 0 invx1
+XX12 N004 Vdd N005 0 invx1
+XX13 N005 Vdd CK1_FB 0 invx1
+XX14 Vdd 0 N001 Vdd N002 tgate params: L=0.28u Wn=1u Wp=3u M={M}
+XX15 Vdd 0 N006 Vdd N007 tgate params: L=0.28u Wn=1u Wp=3u M={M}
+XX16 Vdd 0 N002 Vdd CK1 tgate params: L=0.28u Wn=1u Wp=3u M={M}
+XX17 Vdd 0 N007 Vdd CK2 tgate params: L=0.28u Wn=1u Wp=3u M={M}
+.param M=1
+.ends phase_gen
+
+.subckt cs_cmfb_v2 CK_PHI1 CK_PHI1_BAR CK_PHI2 CK_PHI2_BAR Vbias Vdd Vocm_ref Vom Vop Vctr
+XX1 CK_PHI1 CK_PHI1_BAR N009 Vdd Vop tgate params: L=0.28u Wn=1u Wp=3u M=1
+XX2 CK_PHI1 CK_PHI1_BAR N011 Vdd Vctr tgate params: L=0.28u Wn=1u Wp=3u M=1
+XX3 CK_PHI2 CK_PHI2_BAR Vocm_ref Vdd N009 tgate params: L=0.28u Wn=1u Wp=3u M=1
+XX4 CK_PHI2 CK_PHI2_BAR Vbias Vdd N011 tgate params: L=0.28u Wn=1u Wp=3u M=1
+C1 N009 N011 {C1}
+C2 Vop Vctr {C2}
+XX5 CK_PHI2_BAR CK_PHI2 N019 Vdd N019 tgate params: L=0.28u Wn={Wn_d} Wp={Wp_d} M=1
+XX11 CK_PHI1_BAR CK_PHI1 N016 Vdd N016 tgate params: L=0.28u Wn={Wn_d} Wp={Wp_d} M=1
+XX7 CK_PHI2 CK_PHI2_BAR Vop Vdd N006 tgate params: L=0.28u Wn=1u Wp=3u M=1
+XX8 CK_PHI2 CK_PHI2_BAR Vctr Vdd N012 tgate params: L=0.28u Wn=1u Wp=3u M=1
+XX9 CK_PHI1 CK_PHI1_BAR Vocm_ref Vdd N006 tgate params: L=0.28u Wn=1u Wp=3u M=1
+XX10 CK_PHI1 CK_PHI1_BAR Vbias Vdd N012 tgate params: L=0.28u Wn=1u Wp=3u M=1
+C3 N006 N012 {C1}
+XX21 CK_PHI2_BAR CK_PHI2 N002 Vdd N002 tgate params: L=0.28u Wn={Wn_d} Wp={Wp_d} M=1
+XX22 CK_PHI1_BAR CK_PHI1 N001 Vdd N001 tgate params: L=0.28u Wn={Wn_d} Wp={Wp_d} M=1
+R1 N016 N015 1000G
+R2 N012 Vctr 1000G
+R3 Vop N005 1000G
+R4 N006 Vop 1000G
+R5 Vbias NC_01 1000G
+R6 NC_02 Vbias 1000G
+R7 NC_03 Vocm_ref 1000G
+R8 Vocm_ref NC_04 1000G
+XX6 CK_PHI1 CK_PHI1_BAR N010 Vdd Vom tgate params: L=0.28u Wn=1u Wp=3u M=1
+XX12 CK_PHI1 CK_PHI1_BAR N014 Vdd Vctr tgate params: L=0.28u Wn=1u Wp=3u M=1
+XX13 CK_PHI2 CK_PHI2_BAR Vocm_ref Vdd N010 tgate params: L=0.28u Wn=1u Wp=3u M=1
+XX14 CK_PHI2 CK_PHI2_BAR Vbias Vdd N014 tgate params: L=0.28u Wn=1u Wp=3u M=1
+C4 N010 N014 {C1}
+C5 Vom Vctr {C2}
+XX15 CK_PHI2_BAR CK_PHI2 N020 Vdd N020 tgate params: L=0.28u Wn={Wn_d} Wp={Wp_d} M=1
+XX16 CK_PHI1_BAR CK_PHI1 N017 Vdd N017 tgate params: L=0.28u Wn={Wn_d} Wp={Wp_d} M=1
+XX17 CK_PHI2 CK_PHI2_BAR Vom Vdd N007 tgate params: L=0.28u Wn=1u Wp=3u M=1
+XX18 CK_PHI2 CK_PHI2_BAR Vctr Vdd N013 tgate params: L=0.28u Wn=1u Wp=3u M=1
+XX19 CK_PHI1 CK_PHI1_BAR Vocm_ref Vdd N007 tgate params: L=0.28u Wn=1u Wp=3u M=1
+XX20 CK_PHI1 CK_PHI1_BAR Vbias Vdd N013 tgate params: L=0.28u Wn=1u Wp=3u M=1
+C6 N007 N013 {C1}
+XX23 CK_PHI2_BAR CK_PHI2 N003 Vdd N003 tgate params: L=0.28u Wn={Wn_d} Wp={Wp_d} M=1
+XX24 CK_PHI1_BAR CK_PHI1 N004 Vdd N004 tgate params: L=0.28u Wn={Wn_d} Wp={Wp_d} M=1
+R9 N017 N018 1000G
+R10 N013 Vctr 1000G
+R11 N004 N008 1000G
+R12 N007 Vom 1000G
+R13 Vbias NC_05 1000G
+R14 NC_06 Vbias 1000G
+R15 NC_07 Vocm_ref 1000G
+R16 Vocm_ref NC_08 1000G
+.param C1=20f C2=20f/10
+.param Wn_d=1u/2 Wp_d=3u/2
+.ends cs_cmfb_v2
+
+.subckt nor2x1 A B Vdd Vee X
+M1 X B Vee Vee nmos_3p3 l={L} w={Wn}
+M3 N001 A X Vdd pmos_3p3 l={L} w={Wp}
+M4 Vdd B N001 Vdd pmos_3p3 l={L} w={Wp}
+M2 X A Vee Vee nmos_3p3 l={L} w={Wn}
+.param Wp=6u Wn=1u L=0.28u
+.ends nor2x1
+
+.subckt invx1 A Vdd X Vee
+M1 X A Vee Vee nmos_3p3 l={L} w={Wn}
+M2 Vdd A X Vdd pmos_3p3 l={L} w={Wp}
+.param Wp=3u Wn=1u L=0.28u
+.ends invx1
+
+.subckt tgate A A_bar IN Vdd OUT
+M1 IN A OUT 0 nmos_3p3 l='L' w='Wn' m='M'
+M2 OUT A_bar IN Vdd pmos_3p3 l='L' w='Wp' m='M'
+.param L=0.28u Wn=1u Wp=3u M=1
+.ends tgate
+
+.model NMOS NMOS
+.model PMOS PMOS
+.lib C:\Users\Vicente\AppData\Local\LTspice\lib\cmp\standard.mos
+.inc ..\..\gf180\cmos_tt.txt
+.param vid=0 Vicm=1.65
+.param Cs=20f Cf=91f
+* TV SIMULATION
+* TI SIMULATION
+.ac dec 1000 1 10G
+.meas AC fc WHEN mag(((V(tv_num)/V(tv_den))*(V(ti_num)/V(ti_den))-1)/((V(tv_num)/V(tv_den))+(V(ti_num)/V(ti_den))+2))=1 FALL=1
+.meas AC phT FIND (((V(tv_num)/V(tv_den))*(V(ti_num)/V(ti_den))-1)/((V(tv_num)/V(tv_den))+(V(ti_num)/V(ti_den))+2)) WHEN mag(((V(tv_num)/V(tv_den))*(V(ti_num)/V(ti_den))-1)/((V(tv_num)/V(tv_den))+(V(ti_num)/V(ti_den))+2))=1 FALL=1
+.meas AC pm PARAM 180+phT
+* (((V(tv_num)/V(tv_den))*(V(ti_num)/V(ti_den))-1)/((V(tv_num)/V(tv_den))+(V(ti_num)/V(ti_den))+2))
+.backanno
+.end
