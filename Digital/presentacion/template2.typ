@@ -1,6 +1,8 @@
 // Plantilla clara 16:9 para la segunda presentación.
 // Paleta deliberadamente reducida: tinta, petróleo y grises.
 
+#import "@preview/fletcher:0.5.8" as fletcher: diagram, node, edge
+
 #let c-bg = rgb("#ffffff")
 #let c-fg = rgb("#172033")
 #let c-muted = rgb("#5f6b7a")
@@ -156,3 +158,68 @@
     [#text(size: 14pt, weight: "bold")[#formula] #h(5pt) #text(size: 10.5pt, fill: c-muted)[#note]],
   )
 ]
+
+// ============================================================
+// Diagramas de arquitectura (fletcher) — slide 6
+// ============================================================
+
+// Caja-nodo de proceso con el estilo del deck (rectángulo uniforme).
+#let dnode(pos, body, name: none, fill: c-accent-soft) = node(
+  pos,
+  align(center, text(size: 9pt, fill: c-fg, body)),
+  name: name,
+  shape: fletcher.shapes.rect,
+  fill: fill,
+  stroke: 0.9pt + c-line,
+  corner-radius: 4pt,
+  inset: 5pt,
+)
+
+// Extremo de arista (entrada/salida) en mono, sin caja.
+#let ionode(pos, t, name: none) = node(
+  pos, text(size: 9pt, fill: c-muted, raw(t)), name: name, outset: 0pt,
+)
+
+// Etiqueta pequeña de bus para las aristas.
+#let elabel(t) = text(size: 7.5pt, fill: c-muted, t)
+
+// Datapath: pipeline horizontal de 5 etapas. La entrada x[3:0] y la
+// salida o_D[5:0] son extremos de arista (ghost nodes sin caja). El
+// fondo de las etiquetas iguala al del panel para que se lean nítidas.
+#let arch-datapath = align(center, diagram(
+  spacing: (8mm, 6mm),
+  edge-stroke: 1pt + c-accent,
+  node-outset: 0pt,
+  {
+    let de(a, b, t) = edge(a, b, elabel(t), "->", label-fill: c-accent-soft)
+    ionode((-1, 0), "x[3:0]", name: <in>)
+    dnode((0, 0), [Reg. ent.\ 4 FF],      name: <reg>)
+    dnode((1, 0), [Núcleo\ CLA4+2×CLA5],  name: <core>)
+    dnode((2, 0), [Fases\ 4×6 FF],        name: <fases>)
+    dnode((3, 0), [MUX 4:1\ 6 b],         name: <mux>)
+    dnode((4, 0), [Reg. sal.\ 6 FF],      name: <regout>)
+    ionode((5, 0), "o_D[5:0]", name: <out>)
+    de(<in>,    <reg>,    [4 b])
+    de(<reg>,   <core>,   [2×4 b])
+    de(<core>,  <fases>,  [4×6 b])
+    de(<fases>, <mux>,    [6 b])
+    de(<mux>,   <regout>, [6 b])
+    de(<regout>, <out>,   [6 b])
+  },
+))
+
+// Control: flujo vertical de 3 nodos. La selección alimenta el MUX 4:1
+// del datapath (queda explícito en el nombre del último nodo).
+#let arch-control = align(center, diagram(
+  spacing: (6mm, 7mm),
+  edge-stroke: 1pt + c-accent,
+  node-outset: 0pt,
+  {
+    let ce(a, b, t) = edge(a, b, elabel(t), "->", label-fill: white)
+    dnode((0, 0), [Contador\ 2 FF],       name: <cnt>)
+    dnode((0, 1), [Decoder\ one-hot],     name: <dec>)
+    dnode((0, 2), [Sel. MUX 4:1\ φ0..φ3], name: <sel>)
+    ce(<cnt>, <dec>, [2 b])
+    ce(<dec>, <sel>, [one-hot ×4])
+  },
+))

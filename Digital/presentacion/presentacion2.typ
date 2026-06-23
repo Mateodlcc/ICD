@@ -162,30 +162,10 @@
 #point-divider("Punto 2", "Diagrama general de arquitectura propuesta")
 
 #slide(title: "Diagrama general de la arquitectura", tag: "PUNTO 2")[
-  #grid(columns: (1.23fr, 0.77fr), gutter: 11pt,
+  #grid(columns: (1.55fr, 0.45fr), gutter: 11pt,
     [
       #panel(title: "Camino de datos registrado", fill: c-accent-soft, stroke-c: c-accent)[
-        #align(center)[
-          #grid(columns: (auto, auto, auto, auto, auto), gutter: 5pt, align: horizon,
-            ablock([Entrada#v(1pt)`x[3:0]`]),
-            arr-small,
-            ablock([Reg. entrada#v(1pt)4 FF]),
-            arr-small,
-            ablock([Núcleo#v(1pt)CLA4 + 2×CLA5]),
-          )
-          #v(2pt)
-          #text(size: 12pt, fill: c-accent)[↓ resultados de fase]
-          #v(2pt)
-          #grid(columns: (auto, auto, auto, auto, auto, auto, auto), gutter: 5pt, align: horizon,
-            ablock([Banco de fases#v(1pt)4×6 FF]),
-            arr-small,
-            ablock([MUX 4:1#v(1pt)6 bits]),
-            arr-small,
-            ablock([Reg. salida#v(1pt)6 FF]),
-            arr-small,
-            ablock([Salida#v(1pt)`o_D[5:0]`]),
-          )
-        ]
+        #arch-datapath
       ]
       #v(6pt)
       #panel(title: "Señales calculadas por ciclo")[
@@ -194,17 +174,7 @@
     ],
     [
       #panel(title: "Camino de control")[
-        #align(center)[
-          #ablock([Contador 2 bits#v(1pt)2 FF])
-          #v(4pt)
-          #text(size: 13pt, fill: c-accent)[↓]
-          #v(2pt)
-          #ablock([Decoder one-hot#v(1pt)4 fases])
-          #v(4pt)
-          #text(size: 13pt, fill: c-accent)[↓]
-          #v(2pt)
-          #ablock([Selección MUX#v(1pt)$phi_0..phi_3$])
-        ]
+        #arch-control
       ]
       #v(6pt)
       #panel(title: "Orden de salida", fill: c-panel)[
@@ -251,7 +221,7 @@
 #slide(title: "Flip-flops evaluados y registros del sistema", tag: "PUNTO 3 · FLIP-FLOPS")[
   #grid(columns: (0.9fr, 1.1fr), gutter: 14pt,
     [
-      #kpi("≈ 300 ps", "retardo del DFF tipo D real")
+      #kpi("≈ 300 ps", "retardo del DFF real")
       #v(8pt)
       #kpi("≈ 130 ps", "retardo del SDFF_improved aislado")
       #v(8pt)
