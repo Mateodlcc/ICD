@@ -187,6 +187,10 @@
   )
 ]
 
+#slide(title: "Datapath detallado registrado", tag: "PUNTO 2")[
+  #align(center)[#arch-datapath-full]
+]
+
 // ============================================================
 // 3. CONFIGURACIONES CIRCUITALES
 // ============================================================
@@ -454,6 +458,29 @@
     Estas mejoras apuntan a dos frentes distintos: menor área combinacional mediante reutilización del CLA5, y mayor frecuencia mediante reducción de delays en celdas críticas.
   ]
 ]
+
+// ============================================================
+// CIERRE
+// ============================================================
+#{
+  set page(footer: none)
+  set align(center + horizon)
+  block(width: 100%)[
+    #align(center)[
+      #pill("Fin")
+      #v(14pt)
+      #text(size: 44pt, weight: "bold", fill: c-fg)[Gracias]
+      #v(16pt)
+      #line(length: 28%, stroke: 2pt + c-accent)
+      #v(16pt)po
+    ]
+
+    #align(center)[
+      #text(size: 13pt, fill: c-muted)[Mateo de la Cuadra · Vicente Florez · Alonso Rivera]
+    ]
+  ]
+  pagebreak(weak: true)
+}
 
 // ============================================================
 // ANEXOS

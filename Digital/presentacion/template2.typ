@@ -69,37 +69,22 @@
 
 #let title-slide(title: "", subtitle: "", authors: (), course: "", date: "") = {
   set page(footer: none)
-  set align(horizon)
-  grid(columns: (1.35fr, 0.65fr), gutter: 24pt, align: horizon,
-    [
+  set align(center + horizon)
+  block(width: 100%)[
+    #align(center)[
       #pill(course)
-      #v(13pt)
-      #text(size: 35pt, weight: "bold", fill: c-fg, title)
-      #v(5pt)
-      #text(size: 18pt, fill: c-muted, subtitle)
-      #v(16pt)
-      #line(length: 38%, stroke: 2pt + c-accent)
-      #v(10pt)
-      #for a in authors [#text(size: 14pt, fill: c-fg)[#a] #linebreak()]
-      #v(5pt)
+      #v(15pt)
+      #text(size: 40pt, weight: "bold", fill: c-fg, title)
+      #v(6pt)
+      #text(size: 19pt, fill: c-muted, subtitle)
+      #v(18pt)
+      #line(length: 30%, stroke: 2pt + c-accent)
+      #v(12pt)
+      #for a in authors [#text(size: 15pt, fill: c-fg)[#a] #linebreak()]
+      #v(6pt)
       #text(size: 12pt, fill: c-muted, date)
-    ],
-    align(center, block(
-      width: 100%, fill: c-accent-soft, inset: 18pt, radius: 8pt,
-      stroke: 1pt + c-line,
-    )[
-      #align(center)[
-        #text(size: 13pt, fill: c-muted)[Entrada]
-        #text(size: 31pt, weight: "bold", fill: c-accent)[4 bits]
-        #v(11pt)
-        #text(size: 13pt, fill: c-muted)[Interpolación]
-        #text(size: 31pt, weight: "bold", fill: c-accent)[L = 4]
-        #v(11pt)
-        #text(size: 13pt, fill: c-muted)[Salida]
-        #text(size: 31pt, weight: "bold", fill: c-accent)[6 bits]
-      ]
-    ]),
-  )
+    ]
+  ]
   pagebreak(weak: true)
 }
 
@@ -221,5 +206,75 @@
     dnode((0, 2), [Sel. MUX 4:1\ φ0..φ3], name: <sel>)
     ce(<cnt>, <dec>, [2 b])
     ce(<dec>, <sel>, [one-hot ×4])
+  },
+))
+
+// Datapath detallado (recreación del baseline 6b adaptada a la arquitectura
+// 4b · L=4). Tronco central en x=1.5; cuatro columnas de fase en x=0..3; el
+// control entra por la izquierda con líneas discontinuas. y crece hacia abajo.
+#let arch-datapath-full = align(center, diagram(
+  spacing: (11mm, 6mm),
+  edge-stroke: 1pt + c-accent,
+  node-outset: 0pt,
+  {
+    let de(a, b, t) = edge(a, b, elabel(t), "->", label-fill: white)
+    let ctl(a, b, t) = edge(a, b, elabel(t), "->",
+      stroke: (paint: c-muted, dash: "dashed", thickness: 0.9pt), label-fill: white)
+
+    // --- tronco central ---
+    ionode((1.5, 0), "i_D[3:0]", name: <in>)
+    dnode((1.5, 1), [Reg. muestras\ 4 b],                  name: <reg>)
+    dnode((1.5, 2), [ADD1 · CLA4\ $S = x_"old" + x_"new"$], name: <add1>, fill: c-warn-soft)
+
+    // --- etapas de fase ---
+    dnode((0, 3), [ADD2 · CLA5\ $S + 2 x_"old"$], name: <s0>, fill: c-warn-soft)
+    dnode((1, 3), [Cableado\ $2S$],               name: <s1>, fill: c-warn-soft)
+    dnode((2, 3), [ADD3 · CLA5\ $S + 2 x_"new"$], name: <s2>, fill: c-warn-soft)
+    dnode((3, 3), [Cableado\ $4 x_"new"$],        name: <s3>, fill: c-warn-soft)
+
+    // --- registros de fase ---
+    dnode((0, 4), [$phi_0$\ 6 b], name: <p0>, fill: c-panel)
+    dnode((1, 4), [$phi_1$\ 6 b], name: <p1>, fill: c-panel)
+    dnode((2, 4), [$phi_2$\ 6 b], name: <p2>, fill: c-panel)
+    dnode((3, 4), [$phi_3$\ 6 b], name: <p3>, fill: c-panel)
+
+    // --- salida ---
+    dnode((1.5, 5), [MUX 4:1 · 6 b\ sel = cuenta\[1:0\]], name: <mux>, fill: c-accent-soft)
+    dnode((1.5, 6), [Reg. salida · 6 FF],                 name: <regout>)
+    ionode((1.5, 7), "o_D[5:0]", name: <out>)
+
+    // --- control (izquierda, discontinuo) ---
+    ionode((-0.85, 1), "load_en / i_CK", name: <ck1>)
+    ionode((-0.85, 5), "cuenta[1:0]",    name: <selc>)
+    ionode((-0.85, 6), "i_CK",           name: <ck2>)
+    ctl(<ck1>, <reg>, [])
+    ctl(<selc>, <mux>, [sel])
+    ctl(<ck2>, <regout>, [])
+
+    // --- datos: tronco ---
+    de(<in>, <reg>, [4 b])
+    de(<reg>, <add1>, $x_"old", x_"new"$)
+    de(<add1>, <s0>, $S[4:0]$)
+    de(<add1>, <s1>, [])
+    de(<add1>, <s2>, [])
+
+    // --- datos: taps laterales ruteados por encima de ADD1 ---
+    edge(<reg>, (0, 1.6), <s0>, elabel($2 x_"old"$), "->", label-fill: white)
+    edge(<reg>, (2, 1.6), <s2>, elabel($2 x_"new"$), "->", label-fill: white)
+    edge(<reg>, (3, 1.6), <s3>, elabel($4 x_"new"$), "->", label-fill: white)
+
+    // --- etapa -> registro de fase ---
+    de(<s0>, <p0>, [6 b])
+    de(<s1>, <p1>, [6 b])
+    de(<s2>, <p2>, [6 b])
+    de(<s3>, <p3>, [6 b])
+
+    // --- fases -> MUX -> salida ---
+    de(<p0>, <mux>, [])
+    de(<p1>, <mux>, [])
+    de(<p2>, <mux>, [])
+    de(<p3>, <mux>, [])
+    de(<mux>, <regout>, [6 b])
+    de(<regout>, <out>, [6 b])
   },
 ))
