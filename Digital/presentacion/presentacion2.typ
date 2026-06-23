@@ -19,6 +19,49 @@
   ]
 ]
 
+#let img-card(path, title, caption: none, img-height: 5cm) = block(
+  width: 100%, fill: c-panel, inset: 8pt,
+  radius: 5pt, stroke: 1pt + c-line,
+)[
+  #text(size: 12.2pt, weight: "bold", fill: c-accent, title)
+  #v(4pt)
+  #align(center)[#image(path, width: 100%, height: img-height, fit: "contain")]
+  #if caption != none [
+    #v(3pt)
+    #text(size: 9.8pt, fill: c-muted, caption)
+  ]
+]
+
+#let ablock(txt, fill: c-accent-soft) = box(
+  fill: fill,
+  inset: (x: 7pt, y: 5pt),
+  radius: 4pt,
+  stroke: 0.8pt + c-line,
+)[#text(size: 10.4pt, weight: "bold", fill: c-fg, align(center, txt))]
+
+#let arr-small = text(size: 13pt, fill: c-accent)[→]
+
+#let point-divider(point, title) = {
+  set page(footer: context [
+    #set text(size: 8.5pt, fill: c-muted)
+    #grid(columns: (1fr, auto),
+      align(left)[Filtro de interpolación L=4 — GF180MCU],
+      align(right)[#counter(page).display()],
+    )
+  ])
+  v(3.1cm)
+  align(center)[
+    #pill(point)
+    #v(16pt)
+    #text(size: 42pt, weight: "bold", fill: c-fg, point)
+    #v(8pt)
+    #text(size: 22pt, fill: c-muted, title)
+    #v(16pt)
+    #line(length: 24%, stroke: 2pt + c-accent)
+  ]
+  pagebreak(weak: true)
+}
+
 // ============================================================
 // PORTADA
 // ============================================================
@@ -37,6 +80,8 @@
 // ============================================================
 // 1. IMPLEMENTACIÓN DEL FILTRO
 // ============================================================
+#point-divider("Punto 1", "Implementación del filtro propuesta")
+
 #slide(title: "Implementación del filtro propuesta", tag: "PUNTO 1")[
   #grid(columns: (0.95fr, 1.05fr), gutter: 13pt,
     panel(title: "Cuatro fases entre muestras")[
@@ -114,35 +159,59 @@
 // ============================================================
 // 2. DIAGRAMA GENERAL
 // ============================================================
+#point-divider("Punto 2", "Diagrama general de arquitectura propuesta")
+
 #slide(title: "Diagrama general de la arquitectura", tag: "PUNTO 2")[
-  #v(5pt)
-  #flow(
-    dblock([Entrada#v(1pt)`x[3:0]`]), arr,
-    dblock([Núcleo#v(1pt)CLA 4 b + 2×CLA 5 b]), arr,
-    dblock([Separación#v(1pt)6 DFF]), arr,
-    dblock([Registros de fase#v(1pt)4×6 DFF]), arr,
-    dblock([MUX 4:1#v(1pt)6 bits]), arr,
-    dblock([Salida#v(1pt)`o_D[5:0]`]),
-  )
-  #v(14pt)
-  #grid(columns: (1.3fr, 0.7fr), gutter: 14pt,
-    panel(title: "Camino de datos")[
-      1. Se captura la muestra y se conserva la anterior.
-      2. El núcleo calcula las cuatro fases en formato Q4.2.
-      3. Se registran 6 bits por fase para estabilizar los resultados.
-      4. El MUX entrega una fase por ciclo según el estado del contador.
+  #grid(columns: (1.23fr, 0.77fr), gutter: 11pt,
+    [
+      #panel(title: "Camino de datos registrado", fill: c-accent-soft, stroke-c: c-accent)[
+        #align(center)[
+          #grid(columns: (auto, auto, auto, auto, auto), gutter: 5pt, align: horizon,
+            ablock([Entrada#v(1pt)`x[3:0]`]),
+            arr-small,
+            ablock([Reg. entrada#v(1pt)4 FF]),
+            arr-small,
+            ablock([Núcleo#v(1pt)CLA4 + 2×CLA5]),
+          )
+          #v(2pt)
+          #text(size: 12pt, fill: c-accent)[↓ resultados de fase]
+          #v(2pt)
+          #grid(columns: (auto, auto, auto, auto, auto, auto, auto), gutter: 5pt, align: horizon,
+            ablock([Banco de fases#v(1pt)4×6 FF]),
+            arr-small,
+            ablock([MUX 4:1#v(1pt)6 bits]),
+            arr-small,
+            ablock([Reg. salida#v(1pt)6 FF]),
+            arr-small,
+            ablock([Salida#v(1pt)`o_D[5:0]`]),
+          )
+        ]
+      ]
+      #v(6pt)
+      #panel(title: "Señales calculadas por ciclo")[
+        El núcleo calcula $S=x_"old"+x_"new"$ y reutiliza ese resultado para construir $phi_0$ y $phi_2$ con adders de 5 bits. El registro de salida agregado desacopla el MUX de la carga externa y reduce el ripple observado en la salida.
+      ]
     ],
-    panel(title: "Camino de control", fill: c-panel)[
-      #align(center)[
-        #dblock([Contador 2 bits])
-        #v(5pt)
-        #text(size: 17pt, fill: c-accent)[↓]
-        #v(4pt)
-        #dblock([Decoder one-hot])
-        #v(5pt)
-        #text(size: 17pt, fill: c-accent)[↓]
-        #v(4pt)
-        #dblock([Selección MUX 4:1])
+    [
+      #panel(title: "Camino de control")[
+        #align(center)[
+          #ablock([Contador 2 bits#v(1pt)2 FF])
+          #v(4pt)
+          #text(size: 13pt, fill: c-accent)[↓]
+          #v(2pt)
+          #ablock([Decoder one-hot#v(1pt)4 fases])
+          #v(4pt)
+          #text(size: 13pt, fill: c-accent)[↓]
+          #v(2pt)
+          #ablock([Selección MUX#v(1pt)$phi_0..phi_3$])
+        ]
+      ]
+      #v(6pt)
+      #panel(title: "Orden de salida", fill: c-panel)[
+        `00` → $phi_0$ #linebreak()
+        `01` → $phi_1$ #linebreak()
+        `10` → $phi_2$ #linebreak()
+        `11` → $phi_3$
       ]
     ],
   )
@@ -151,6 +220,8 @@
 // ============================================================
 // 3. CONFIGURACIONES CIRCUITALES
 // ============================================================
+#point-divider("Punto 3", "Configuraciones circuitales elegidas")
+
 #slide(title: "Adders elegidos", tag: "PUNTO 3 · ADDERS")[
   #grid(columns: (1fr, auto, 1fr, auto, 1fr), gutter: 8pt, align: horizon,
     panel(title: "RCA inicial")[
@@ -177,15 +248,15 @@
   ]
 ]
 
-#slide(title: "Flip-flop elegido y cuello de botella", tag: "PUNTO 3 · FLIP-FLOPS")[
+#slide(title: "Flip-flops evaluados y registros del sistema", tag: "PUNTO 3 · FLIP-FLOPS")[
   #grid(columns: (0.9fr, 1.1fr), gutter: 14pt,
     [
       #kpi("≈ 300 ps", "retardo del DFF tipo D real")
       #v(8pt)
-      #kpi("1.45 GHz", "máxima frecuencia aceptada en simulación")
+      #kpi("≈ 130 ps", "retardo del SDFF_improved aislado")
       #v(8pt)
       #panel(fill: c-accent-soft, stroke-c: c-accent)[
-        El DFF real es el *cuello de botella actual*. Su retardo consume una fracción importante del período de ≈ 690 ps disponible a 1.45 GHz.
+        El DFF real limita la versión original a *1.46 GHz*. Al agregar un registro de salida, la alternativa *SDFF_improved* se vuelve viable porque el ripple queda desacoplado de la salida observada.
       ]
     ],
     [
@@ -193,19 +264,20 @@
         columns: (1.45fr, 0.55fr), inset: 7pt, align: (left, right),
         stroke: 0.6pt + c-line,
         fill: (_, y) => if y == 0 { c-accent-soft },
-        [*Registros del sistema*], [*DFF*],
+        [*Registros del sistema*], [*FF*],
+        [Entrada registrada], [4],
         [Registros de fase: 4 × 6], [24],
+        [Salida registrada], [6],
         [Contador de fase], [2],
-        [Separación de entrada / estabilización], [6],
-        [*Total*], [*32*],
+        [*Total implementado*], [*36*],
       )
       #v(8pt)
       #panel(title: "Configuración seleccionada")[
-        Se mantiene el *DFF tipo D* porque entrega una salida estable y sin ripple dentro del rango aceptado.
+        La versión final usa el arreglo de salida para estabilizar la respuesta. Con esto se acepta la implementación con *SDFF_improved* a 1.8 GHz.
       ]
       #v(8pt)
-      #pending(title: "Alternativas descartadas")[
-        HLFF y SDFF operaron sobre 2 GHz, pero introdujeron ripple. Las capturas comparativas se presentan en el Punto 5.
+      #pending(title: "Optimización pendiente")[
+        Bastaría con *33 FF*: $phi_3$ no requiere bits de resolución extra y $phi_1$ solo necesita un bit fraccional para representar $1/2$.
       ]
     ],
   )
@@ -270,7 +342,7 @@
         14 NAND + 3 NOR pseudo-NMOS + 7 XNOR + 24 INVx1 = *48 compuertas*.
       ]
       #v(7pt)
-      #text(size: 10.5pt, fill: c-muted)[El total excluye los 32 flip-flops y buffers de entrada/salida.]
+      #text(size: 10.5pt, fill: c-muted)[El total excluye los 36 flip-flops y buffers de entrada/salida.]
     ],
   )
 ]
@@ -278,12 +350,15 @@
 // ============================================================
 // 4. SIMULACIÓN TRANSIENTE FUNCIONAL
 // ============================================================
+#point-divider("Punto 4", "Simulación transiente: funcionamiento correcto")
+
 #slide(title: "Simulación transiente: funcionamiento correcto", tag: "PUNTO 4")[
   #grid(columns: (1.35fr, 0.65fr), gutter: 14pt,
-    sim-space(
-      "Forma de onda del test funcional",
-      "Insertar captura con entrada, contador, selección y salida Q4.2.",
-      height: 7.2cm,
+    img-card(
+      "imgs/Resultados finales/1.46G Nominal.jpeg",
+      "DFF original · 1.46 GHz nominal",
+      caption: "Test funcional usado como referencia: fases ordenadas y salida Q4.2 correcta.",
+      img-height: 6.8cm,
     ),
     [
       #panel(title: "Qué debe observarse")[
@@ -295,7 +370,9 @@
       ]
       #v(8pt)
       #panel(title: "Punto de operación nominal", fill: c-accent-soft, stroke-c: c-accent)[
-        El circuito fue verificado primero a *1 GHz* con resultados funcionales satisfactorios.
+        Se deja como simulación funcional base la versión con *DFF real* operando a *1.46 GHz*.
+        #v(4pt)
+        *Potencia medida:* 34.99 mW.
       ]
     ],
   )
@@ -304,49 +381,48 @@
 // ============================================================
 // 5. FRECUENCIA MÁXIMA Y POTENCIA
 // ============================================================
+#point-divider("Punto 5", "Máxima frecuencia de operación y potencia")
+
 #slide(title: "Frecuencia máxima aceptada y potencia", tag: "PUNTO 5")[
   #grid(columns: (1.25fr, 0.75fr), gutter: 14pt,
-    sim-space(
-      "Simulación del sistema a 1.45 GHz",
-      "Insertar captura del último test sin ripple ni errores de fase.",
-      height: 7.1cm,
+    img-card(
+      "imgs/Resultados finales/1.8G FF real (+ideal).jpeg",
+      "SDFF_improved · 1.8 GHz",
+      caption: "Máxima frecuencia aceptada con onda completa correcta en la salida.",
+      img-height: 6.8cm,
     ),
     [
-      #kpi("1.45 GHz", "máxima frecuencia aceptada")
+      #kpi("1.8 GHz", "máxima frecuencia aceptada")
       #v(7pt)
-      #kpi("≈ 690 ps", "período de reloj")
+      #kpi("≈ 556 ps", "período de reloj")
       #v(7pt)
-      #kpi("≈ 300 ps", "retardo del DFF real")
+      #kpi("≈ 130 ps", "retardo del SDFF_improved aislado")
       #v(7pt)
-      #pending(title: "Potencia consumida")[
-        *P = [COMPLETAR] mW*
+      #panel(title: "Potencia consumida", fill: c-accent-soft, stroke-c: c-accent)[
+        *P = 45.75 mW*
         #v(3pt)
-        Incorporar el valor medido en el mismo test a 1.45 GHz, indicando tensión, corner y promedio temporal.
+        Valor medido para la simulación transiente final a 1.8 GHz.
       ]
     ],
   )
 ]
 
-#slide(title: "Alternativas sobre 2 GHz: ripple no aceptable", tag: "PUNTO 5 · RESPALDO")[
-  #grid(columns: (1fr, 1fr), gutter: 13pt,
-    sim-space(
-      "HLFF a 2 GHz+",
-      "Insertar captura destacando el ripple sobre la rampa de salida.",
-      height: 5.4cm,
+#slide(title: "Respaldo de mejora: salida ideal a 2 GHz", tag: "PUNTO 5 · RESPALDO")[
+  #grid(columns: (1.25fr, 0.75fr), gutter: 14pt,
+    img-card(
+      "imgs/Resultados finales/2G FF ideal.jpeg",
+      "Referencia con FF ideal solo a la salida · 2.0 GHz",
+      caption: "Muestra que el datapath puede sostener 2 GHz si el desacople final no introduce retardo real.",
+      img-height: 5.6cm,
     ),
-    sim-space(
-      "SDFF a 2 GHz+",
-      "Insertar captura destacando las transiciones espurias.",
-      height: 5.4cm,
-    ),
-  )
-  #v(9pt)
-  #grid(columns: (1.15fr, 0.85fr), gutter: 13pt,
-    panel(title: "Resultado de la comparación")[
-      HLFF y SDFF permiten una mayor frecuencia y conservan una rampa macroscópicamente correcta. Sin embargo, el ripple introduce múltiples cruces de umbral y puede propagarse como errores digitales.
-    ],
-    pending(title: "Decisión")[
-      Se priorizó integridad de señal sobre frecuencia máxima aparente. El *DFF tipo D* se mantiene como flip-flop del sistema.
+    [
+      #panel(title: "Lectura del resultado")[
+        El arreglo de salida redujo el ripple y permitió que *SDFF_improved* fuera una alternativa viable. Con FF real se aceptó 1.8 GHz; con un FF ideal solo a la salida se observa operación a 2 GHz.
+      ]
+      #v(8pt)
+      #panel(title: "Comparación de alternativas", fill: c-panel)[
+        HLFF y SDFF fueron evaluados para aumentar frecuencia. Se retiene *SDFF_improved*. La variante de 2 GHz queda como respaldo, porque depende de un FF ideal en la salida.
+      ]
     ],
   )
 ]
@@ -354,33 +430,94 @@
 // ============================================================
 // 6. TABLA RESUMEN
 // ============================================================
+#point-divider("Punto 6", "Tabla resumen del sistema")
+
 #slide(title: "Resumen del sistema", tag: "PUNTO 6")[
   #grid(columns: (1.25fr, 0.75fr), gutter: 15pt,
     [
       #table(
-        columns: (1.2fr, 1.35fr, 0.65fr), inset: 8pt,
+        columns: (1.08fr, 1.45fr, 0.72fr), inset: 7pt,
         align: (left, left, right),
         stroke: 0.6pt + c-line,
         fill: (_, y) => if y == 0 { c-accent-soft },
         [*Métrica*], [*Composición / condición*], [*Resultado*],
-        [Flip-flops], [4 fases × 6 + counter 2 + separación 6], [*32*],
+        [Flip-flops], [36 implementados; 33 mínimos optimizando $phi_3$ y $phi_1$], [*36 / 33*],
         [Compuertas], [Aritmética 194 + control/MUX 40], [*234*],
-        [Frecuencia máxima], [DFF real sin ripple], [*1.45 GHz*],
-        [Retardo del DFF], [DFF tipo D seleccionado], [*≈ 300 ps*],
-        [Potencia consumida], [Test transiente a 1.45 GHz], [*[PENDIENTE]*],
+        [Funcional base], [DFF real original], [*1.46 GHz*],
+        [Frecuencia máxima], [SDFF_improved con salida estable], [*1.8 GHz*],
+        [Referencia ideal], [FF ideal solo a la salida], [*2.0 GHz*],
+        [Retardos FF], [DFF real / SDFF_improved aislado], [*≈300 / ≈130 ps*],
+        [Potencia], [DFF 1.46 GHz / SDFF 1.8 GHz], [*34.99 / 45.75 mW*],
       )
     ],
     [
-      #kpi("32", "flip-flops totales")
-      #v(8pt)
-      #kpi("1.45 GHz", "frecuencia máxima simulada")
-      #v(8pt)
+      #kpi("36", "flip-flops implementados")
+      #v(7pt)
+      #kpi("1.8 GHz", "frecuencia máxima final")
+      #v(7pt)
       #kpi("234", "compuertas combinacionales")
+      #v(7pt)
+      #kpi("33", "FF mínimos con optimización")
     ],
   )
-  #v(10pt)
-  #panel(fill: c-accent-soft, stroke-c: c-accent)[
-    #set text(size: 14pt)
-    *Conclusión:* los adders superan individualmente los 2.5 GHz, pero el DFF real limita el sistema completo a 1.45 GHz. Las alternativas más rápidas se descartaron por ripple.
+]
+
+// ============================================================
+// 7. OTROS RESULTADOS / MEJORAS
+// ============================================================
+#point-divider("Punto 7", "Mejoras posibles y resultados de respaldo")
+
+#slide(title: "Mejoras posibles a implementar", tag: "PUNTO 7")[
+  #grid(columns: (1fr, 1fr, 1fr), gutter: 12pt,
+    panel(title: "Reducir compuertas")[
+      Implementar un MUX interno que entregue a un único CLA de 5 bits las entradas $S$ y $x_"old"$ o $x_"new"$ según la fase. Esto permitiría reemplazar los dos CLA5 actuales por uno compartido.
+    ],
+    panel(title: "Aumentar velocidad por dispositivo")[
+      Ajustar el voltaje de base para reducir $V_"th"$ efectivo de los transistores. La ventaja esperada es menor delay; el costo debe evaluarse en potencia, robustez y variación de proceso.
+    ],
+    panel(title: "Optimizar MUX de salida")[
+      Con SDFF_improved, el MUX pasa a ser un cuello de botella relevante. Buscar una celda MUX más rápida podría aumentar la frecuencia máxima sin cambiar el filtro.
+    ],
+  )
+  #v(12pt)
+  #panel(fill: c-panel)[
+    Estas mejoras apuntan a dos frentes distintos: menor área combinacional mediante reutilización del CLA5, y mayor frecuencia mediante reducción de delays en celdas críticas.
   ]
+]
+
+// ============================================================
+// ANEXOS
+// ============================================================
+#slide(title: "Anexo: barrido de alpha en pseudo-CLA", tag: "ANEXO")[
+  #grid(columns: (1fr, 1fr), gutter: 13pt,
+    img-card(
+      "imgs/Salida CLA para diferentes valores de alpha.jpeg",
+      "Salida CLA para diferentes valores de alpha",
+      img-height: 5.9cm,
+    ),
+    img-card(
+      "imgs/Delays para diferentes alpha.jpeg",
+      "Delays para diferentes alpha",
+      img-height: 5.9cm,
+    ),
+  )
+  #v(7pt)
+  #panel(fill: c-panel)[
+    El valor seleccionado fue $alpha=W_p/W_n=0.9$, elegido empíricamente por entregar mejores tiempos en la mayoría de las transiciones evaluadas.
+  ]
+]
+
+#slide(title: "Anexo: adders con DFF real", tag: "ANEXO")[
+  #grid(columns: (1fr, 1fr), gutter: 13pt,
+    img-card(
+      "imgs/CLA 4bit con DFF real.jpeg",
+      "CLA 4bit con DFF real",
+      img-height: 5.9cm,
+    ),
+    img-card(
+      "imgs/CLA 5bit con DFF real.jpeg",
+      "CLA 5bit con DFF real",
+      img-height: 5.9cm,
+    ),
+  )
 ]
