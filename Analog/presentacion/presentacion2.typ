@@ -371,16 +371,28 @@
   )
 ]
 
-#slide(title: "Resultado adicional 3", tag: "PUNTO 8 · 3/3")[
+#slide(title: "CMFB con capacitores conmutados", tag: "PUNTO 8 · 3/3")[
   #grid(columns: (1.2fr, 0.8fr), gutter: 12pt,
-    placeholder(
-      "Captura o gráfico del resultado adicional",
-      caption: [Usar esta diapositiva solo si aporta información distinta.],
-      height: 7.4cm,
+    img-card(
+      "imgs_p2/1.- Circuito CMFB.jpeg",
+      "Circuito CMFB",
+      img-height: 7.25cm,
     ),
-    pending(title: "Límite")[
-      Punto 8 queda limitado a máximo tres diapositivas. Si un resultado es
-      redundante con la tabla de especificaciones, dejarlo fuera.
+    [
+      #panel(title: "Topología Choksi-Carley", fill: c-accent-soft, stroke-c: c-accent)[
+        #set text(size: 11.2pt)
+        Se aprovechó la topología de Choksi y Carley para implementar el CMFB
+        con capacitores conmutados sin variar la capacitancia vista por la salida
+        durante el cambio de fase.
+      ]
+      #v(8pt)
+      #panel(title: "Capacitancia constante")[
+        #set text(size: 11.2pt)
+        Al conmutar se selecciona el $C_1$ a utilizar, mientras $C_2$ permanece
+        activo en todo momento. Así, la salida percibe una carga constante:
+        #v(5pt)
+        #align(center)[#text(size: 15pt, weight: "bold")[$C_("out,CMFB") = C_1 + C_2 = 22$ fF]]
+      ]
     ],
   )
 ]

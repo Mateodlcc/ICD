@@ -49,7 +49,7 @@
     #set text(size: 8.5pt, fill: c-muted)
     #grid(columns: (1fr, auto),
       align(left)[#footer-title],
-      align(right)[#context counter(page).display()],
+      align(right)[#counter(page).display()],
     )
   ])
   block(width: 100%)[
@@ -176,7 +176,7 @@
     #set text(size: 8.5pt, fill: c-muted)
     #grid(columns: (1fr, auto),
       align(left)[#footer-title],
-      align(right)[#context counter(page).display()],
+      align(right)[#counter(page).display()],
     )
   ])
   v(3.1cm)
