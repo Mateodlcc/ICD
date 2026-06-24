@@ -134,7 +134,7 @@
         align: (left, right, right),
         stroke: 0.5pt + c-line,
         fill: (_, y) => if y == 0 { c-accent-soft },
-        [*Métrica*], [*Mano*], [*SPICE*],
+        [*Métrica*], [*Teórico*], [*SPICE*],
         [$A_(v 0)$], [62.88 dB], [66.08 dB],
         [$f_p$], [27.28 kHz], [11.67 kHz],
         [GBW], [38 MHz], [23.5 MHz],
@@ -449,9 +449,6 @@
     [
       #kpi("41.54 dB", "predicción teórica")
       #v(8pt)
-      #pending(title: "SPICE pendiente")[
-        Falta completar el barrido de modo común para cerrar el cumplimiento.
-      ]
     ],
   )
 ]
@@ -474,10 +471,6 @@
     [
       #kpi("344.14 dB", "predicción teórica")
       #v(8pt)
-      #pending(title: "SPICE pendiente")[
-        Falta completar la simulación de rechazo de fuente para comparar contra
-        el mínimo de 60 dB.
-      ]
     ],
   )
 ]
