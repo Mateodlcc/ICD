@@ -27,84 +27,40 @@
 // ============================================================
 #point-divider("Punto 1", "Esquemático del circuito con anotaciones DC")
 
-#slide(title: "Par diferencial", tag: "PUNTO 1 · 1/5")[
-  #grid(columns: (1.35fr, 0.65fr), gutter: 12pt,
-    placeholder(
-      "Imagen del par diferencial",
-      caption: [Agregar $I_D$, voltajes DC, $g_m/I_D$, $W$ y $L$ de cada transistor.],
-      height: 7.45cm,
-    ),
-    panel(title: "Anotaciones requeridas", fill: c-accent-soft, stroke-c: c-accent)[
-      - Corriente DC por rama.
-      - Voltajes $V_G$, $V_D$ y $V_S$.
-      - Punto $g_m/I_D$ usado.
-      - Dimensiones $W$ y $L$.
-    ],
-  )
+#slide(title: "Par diferencial", tag: "PUNTO 1 · 1/6")[
+  #align(center)[
+    #image("imgs_p2/1.- Circuito Par diferencial.jpeg", height: 90%, fit: "contain")
+  ]
 ]
 
-#slide(title: "Cascodo plegado", tag: "PUNTO 1 · 2/5")[
-  #grid(columns: (1.35fr, 0.65fr), gutter: 12pt,
-    placeholder(
-      "Imagen del cascodo plegado",
-      caption: [Agregar ramas PMOS/NMOS, nodos de salida y corrientes de rama.],
-      height: 7.45cm,
-    ),
-    panel(title: "Anotaciones requeridas", fill: c-accent-soft, stroke-c: c-accent)[
-      - Corrientes DC de ramas plegadas.
-      - Voltajes DC en nodos de cascodo.
-      - $g_m/I_D$ de transistores de salida.
-      - $W$ y $L$ de cada dispositivo.
-    ],
-  )
+#slide(title: "Cascodo plegado", tag: "PUNTO 1 · 2/6")[
+  #align(center)[
+    #image("imgs_p2/1.- Circuito Cascodo plegado.jpeg", height: 90%, fit: "contain")
+  ]
 ]
 
-#slide(title: "CMFB y phase generator", tag: "PUNTO 1 · 3/5")[
-  #grid(columns: (1.35fr, 0.65fr), gutter: 12pt,
-    placeholder(
-      "Imagen de CMFB + phase generator",
-      caption: [Agregar fases, capacitores, $V_("ctr")$ y $V_("out,CM")$.],
-      height: 7.45cm,
-    ),
-    panel(title: "Anotaciones requeridas", fill: c-accent-soft, stroke-c: c-accent)[
-      - Fases usadas por el SC-CMFB.
-      - Capacitores y nodos muestreados.
-      - Voltaje de control $V_("ctr")$.
-      - Carga que agrega al OTA.
-    ],
-  )
+#slide(title: "CMFB", tag: "PUNTO 1 · 3/6")[
+  #align(center)[
+    #image("imgs_p2/1.- Circuito CMFB.jpeg", height: 90%, fit: "contain")
+  ]
 ]
 
-#slide(title: "Master branch", tag: "PUNTO 1 · 4/5")[
-  #grid(columns: (1.35fr, 0.65fr), gutter: 12pt,
-    placeholder(
-      "Imagen de la master current branch",
-      caption: [Agregar corriente maestra, referencias de bias y dimensiones.],
-      height: 7.45cm,
-    ),
-    panel(title: "Anotaciones requeridas", fill: c-accent-soft, stroke-c: c-accent)[
-      - Corriente de referencia.
-      - Voltajes de polarización generados.
-      - Transistores conectados como diodo.
-      - Factores de copia usados.
-    ],
-  )
+#slide(title: "Phase generator", tag: "PUNTO 1 · 4/6")[
+  #align(center)[
+    #image("imgs_p2/1.- Circuito Phase Generator.jpeg", height: 90%, fit: "contain")
+  ]
 ]
 
-#slide(title: "Espejos de corriente", tag: "PUNTO 1 · 5/5")[
-  #grid(columns: (1.35fr, 0.65fr), gutter: 12pt,
-    placeholder(
-      "Imagen de los espejos de corriente",
-      caption: [Agregar razones de espejo, corrientes copiadas y $V_(b 1)$/$V_(b 2)$.],
-      height: 7.45cm,
-    ),
-    panel(title: "Anotaciones requeridas", fill: c-accent-soft, stroke-c: c-accent)[
-      - Razones de espejo.
-      - Corrientes copiadas desde la master branch.
-      - Voltajes $V_(b 1)$ y $V_(b 2)$.
-      - Verificación de razón menor o igual a 10.
-    ],
-  )
+#slide(title: "Master branch", tag: "PUNTO 1 · 5/6")[
+  #align(center)[
+    #image("imgs_p2/1.- Circuito Master Branch.jpeg", height: 90%, fit: "contain")
+  ]
+]
+
+#slide(title: "Espejos de corriente", tag: "PUNTO 1 · 6/6")[
+  #align(center)[
+    #image("imgs_p2/1.- Circuito Espejos de corriente.jpeg", height: 90%, fit: "contain")
+  ]
 ]
 
 // ============================================================
@@ -122,12 +78,13 @@
     fill: (_, y) => if y == 0 { c-accent-soft },
     [*Especificación*], [*Requerido por el proyecto*], [*Predicción (cálculos a mano)*], [*Simulación (SPICE)*], [*Cumplimiento*],
     [Ganancia de voltaje de lazo abierto], [>= 60 dB], [62.88 dB], [66.08 dB], [#state-badge("Cumple", color: c-accent)],
+    [Ancho de banda], [Sin mínimo requerido], [24.58 MHz], [11.67 MHz], [#state-badge("Ref.", color: c-muted)],
     [Producto ganancia-ancho de banda], [GBW >= 20 MHz], [38 MHz], [23.5 MHz], [#state-badge("Cumple", color: c-accent)],
-    [Potencia DC], [Minimizar], [49.86 µW], [55.67 µW], [#state-badge("Reportado", color: c-muted)],
+    [Potencia DC], [Minimizar], [51.52 µW], [55.67 µW], [#state-badge("Reportado", color: c-muted)],
     [Excursión de voltaje], [2 V con ganancia DC >= 0.5 kV/V], [2.93 V], [2.51 V], [#state-badge("Cumple", color: c-accent)],
-    [CMRR en DC], [>= 60 dB], [41.54 dB (estimación incompleta)], [por completar], [#state-badge("Pendiente", color: c-warn)],
-    [PSRR en DC], [>= 60 dB], [344.14 dB], [por completar], [#state-badge("Pendiente", color: c-warn)],
-    [SNR], [>= 60 dB], [44.94 dB], [por completar], [#state-badge("Pendiente", color: c-warn)],
+    [CMRR en DC], [>= 60 dB], [41.54 dB (estimación incompleta)], [176.38 dB], [#state-badge("Cumple", color: c-accent)],
+    [PSRR en DC], [>= 60 dB], [344.14 dB], [284.48 dB], [#state-badge("Cumple", color: c-accent)],
+    [SNR], [>= 60 dB], [44.94 dB], [29.22 dB], [#state-badge("No cumple", color: c-warn)],
     [Margen de fase], [> 60° para $beta=1$], [64.44° (buffer)], [74.35° (buffer)], [#state-badge("Cumple", color: c-accent)],
     [Frecuencia de crossover], [Referencia de estabilidad], [27.2 MHz (buffer)], [20.98 MHz (buffer)], [#state-badge("Ref.", color: c-muted)],
     [Tiempo de subida y caída 10%-90%], [<= 50 ns con escalón diferencial de 1 V y $beta=0.7$], [N/A], [$t_r=30.48$ ns, $t_f=34.7$ ns], [#state-badge("Cumple", color: c-accent)],
@@ -138,7 +95,7 @@
   #v(3pt)
   #text(size: 8.4pt, fill: c-muted)[
     La fila de tiempo usa la simulación con CMFB ideal y CMFB real conectado como carga capacitiva.
-    CMRR, PSRR y SNR quedan pendientes de completar con los barridos finales de SPICE.
+    La SNR queda bajo la especificación; CMRR y PSRR cumplen con margen amplio.
   ]
 ]
 
@@ -383,19 +340,9 @@
 #point-divider("Punto 8", "Otros resultados importantes")
 
 #slide(title: "Excursión de salida", tag: "PUNTO 8 · 1/3")[
-  #grid(columns: (1.25fr, 0.75fr), gutter: 12pt,
-    img-card(
-      "imgs_p2/8.- Excursión de salida.jpeg",
-      "Excursión máxima de salida",
-      caption: "Barrido usado para estimar el rango de salida útil.",
-      img-height: 7.25cm,
-    ),
-    panel(title: "Lectura")[
-      Este gráfico respalda la especificación de excursión de voltaje. El valor
-      final de $V_("out,pp")$ y la condición de ganancia asociada se pueden llevar
-      a la tabla del punto 2 cuando quede fijado el criterio de distorsión.
-    ],
-  )
+  #align(center)[
+    #image("imgs_p2/8.- Excursión de salida.jpeg", width: 100%, height: 8.7cm, fit: "contain")
+  ]
 ]
 
 #slide(title: "Ruido integrado de salida", tag: "PUNTO 8 · 2/3")[
@@ -416,9 +363,9 @@
         Intervalo de integración: *1 kHz* a *100 MHz*.
       ]
       #v(8pt)
-      #panel(title: "Uso en especificación")[
-        Este valor se usa para cerrar la fila de SNR una vez fijada la amplitud
-        de señal RMS de referencia.
+      #panel(title: "Intento de mejora")[
+        Se probó la propuesta de aumentar el $g_m$ de los transistores de entrada
+        para mejorar el SNR, pero no se obtuvo una mejora efectiva.
       ]
     ],
   )
@@ -447,13 +394,13 @@
   #grid(columns: (1.1fr, 0.9fr), gutter: 12pt,
     panel(title: "Modelo usado", fill: c-accent-soft, stroke-c: c-accent)[
       #set text(size: 13pt)
-      $P = V_("DD") I_("OTA") + V_("DD") f_("ck,CMFB") (C_("CMFB") + C_L)$
+      $P = V_("DD") (I_("OTA") + I_("espejos") + f_("ck,CMFB") (C_("CMFB") + C_L))$
       #v(8pt)
-      El primer término corresponde al consumo estático del OTA y el segundo
-      aproxima la potencia dinámica asociada al CMFB conmutado.
+      El modelo suma la corriente del OTA, la corriente de espejos y el término
+      dinámico asociado al CMFB conmutado.
     ],
     [
-      #kpi("49.86 µW", "predicción teórica")
+      #kpi("51.52 µW", "predicción teórica")
       #v(8pt)
       #kpi("55.67 µW", "resultado SPICE")
     ],
