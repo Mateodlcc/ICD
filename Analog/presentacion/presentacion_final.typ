@@ -360,7 +360,7 @@
         [*Parámetro*], [*Valor*],
         [$C_f$], [91 fF],
         [$C_s$], [20 fF],
-        [$C_("in")$ considerado], [incluido en el cálculo],
+        [$C_("in")$ considerado], [$approx 1.64 times 10^(-14)$ F (16.44 fF)],
         [$beta$ objetivo], [0.7],
       )
     ],
@@ -435,6 +435,13 @@
         activo en todo momento. Así, la salida percibe una carga constante:
         #v(5pt)
         #align(center)[#text(size: 15pt, weight: "bold")[$C_("out,CMFB") = C_1 + C_2 = 22$ fF]]
+      ]
+      #v(6pt)
+      #text(size: 7.8pt, fill: c-muted)[
+        *Referencia:* O. Choksi y L. R. Carley, “Analysis of
+        Switched-Capacitor Common-Mode Feedback Circuit,” _IEEE Transactions
+        on Circuits and Systems II_, vol. 50, no. 12, pp. 906–917, dic. 2003.
+        #link("https://doi.org/10.1109/TCSII.2003.820253")[DOI: 10.1109/TCSII.2003.820253].
       ]
     ],
   )
@@ -568,15 +575,56 @@
   )
 ]
 
+#slide(title: "Anexo: frecuencia de crossover y margen de fase", tag: "ANEXO")[
+  #grid(columns: (1.12fr, 0.88fr), gutter: 12pt,
+    [
+      #panel(title: "Cálculo teórico", fill: c-accent-soft, stroke-c: c-accent)[
+        #set text(size: 9.25pt)
+        $C_("in") = C_("gs,pair") + (1 + g_("m,pair")/g_("m,p")) C_("gd,pair")$
+        #linebreak()
+        $C_("L,eff") = C_L + C_("CMFB") + C_("par,out") + C_("in") = 149.07$ fF
+        #v(4pt)
+        $omega_c = g_("m,pair") / C_("L,eff")$,
+        $f_c = omega_c/(2 pi) = 27.22$ MHz
+        #v(5pt)
+        #table(
+          columns: (1fr, auto),
+          inset: 3pt,
+          align: (left, right),
+          stroke: 0.5pt + c-line,
+          fill: (_, y) => if y == 0 { white },
+          [*Polo*], [*Frecuencia*],
+          [Dominante, salida], [18.23 kHz],
+          [Nodo intermedio $x$], [69.31 MHz],
+          [Nodo intermedio $z$], [374.36 MHz],
+        )
+        #v(5pt)
+        $"PM" = 180 degree - ("atan"(omega_c/omega_(p 1)) +
+        "atan"(omega_c/omega_(p x)) + "atan"(omega_c/omega_(p z)))$
+        #linebreak()
+        #align(center)[$"PM" = 64.44 degree$]
+      ]
+    ],
+    [
+      #kpi("27.22 MHz", "frecuencia de crossover teórica")
+      #v(12pt)
+      #kpi("64.44°", "margen de fase teórico")
+    ],
+  )
+]
+
 #slide(title: "Anexo: SNR", tag: "ANEXO")[
   #grid(columns: (0.95fr, 1.05fr), gutter: 12pt,
     [
       #panel(title: "Cálculo teórico", fill: c-accent-soft, stroke-c: c-accent)[
-        #set text(size: 10.2pt)
+        #set text(size: 9.5pt)
         $i_("n,in") = (4 k T gamma / g_(m 1)) (1 + g_(m 3)/g_(m 1) + g_(m 5)/g_(m 1))$
         #v(4pt)
-        $v_("n,out,rms") = sqrt(i_("n,in") A_("v,teorico")^2 (pi/2) f_p)$
-        #v(5pt)
+        $B_n = 1/(2 pi) integral_0^infinity 1/(1 + (omega/omega_p)^2) dif omega
+        = (pi/2) f_p$
+        #v(4pt)
+        $v_("n,out,rms") = sqrt(i_("n,in") A_("v,teorico")^2 B_n)$
+        #v(4pt)
         $"SNR" = 20 log_10((V_("swing") / sqrt(2)) / v_("n,out,rms"))$
       ]
       #v(7pt)
