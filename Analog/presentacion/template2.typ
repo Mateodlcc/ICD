@@ -49,7 +49,7 @@
     #set text(size: 8.5pt, fill: c-muted)
     #grid(columns: (1fr, auto),
       align(left)[#footer-title],
-      align(right)[#counter(page).display()],
+      align(right)[#context counter(page).display()],
     )
   ])
   block(width: 100%)[
@@ -114,7 +114,7 @@
   stroke: 0.9pt + c-line,
 )[#text(size: 12pt, weight: "bold", fill: color, align(center, txt))]
 
-#let arr = text(size: 17pt, fill: c-accent, baseline: 0pt)[->]
+#let arr = text(size: 17pt, fill: c-accent, baseline: 2pt)[$arrow$]
 
 #let flow(..items) = align(center, grid(
   columns: items.pos().len() * (auto,),
@@ -176,7 +176,7 @@
     #set text(size: 8.5pt, fill: c-muted)
     #grid(columns: (1fr, auto),
       align(left)[#footer-title],
-      align(right)[#counter(page).display()],
+      align(right)[#context counter(page).display()],
     )
   ])
   v(3.1cm)

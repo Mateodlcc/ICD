@@ -472,7 +472,7 @@
       #text(size: 44pt, weight: "bold", fill: c-fg)[Gracias]
       #v(16pt)
       #line(length: 28%, stroke: 2pt + c-accent)
-      #v(16pt)po
+      #v(16pt)
     ]
 
     #align(center)[
@@ -485,6 +485,116 @@
 // ============================================================
 // ANEXOS
 // ============================================================
+#slide(title: "Anexo: diagrama general del circuito", tag: "ANEXO · CIRCUITO")[
+  #align(center)[
+    #image(
+      "imgs/Circuitos/General.jpeg",
+      width: 100%,
+      height: 9.4cm,
+      fit: "contain",
+    )
+  ]
+]
+
+#slide(title: "Anexo: circuito de entrada", tag: "ANEXO · CIRCUITO")[
+  #align(center)[
+    #image(
+      "imgs/Circuitos/input.jpeg",
+      width: 100%,
+      height: 9.6cm,
+      fit: "contain",
+    )
+  ]
+]
+
+#slide(title: "Anexo: sumadores", tag: "ANEXO · CIRCUITO")[
+  #align(center)[
+    #image(
+      "imgs/Circuitos/Adder.jpeg",
+      width: 100%,
+      height: 9.6cm,
+      fit: "contain",
+    )
+  ]
+]
+
+#slide(title: "Anexo: flip-flops", tag: "ANEXO · CIRCUITO")[
+  #align(center)[
+    #image(
+      "imgs/Circuitos/Flip Flops.jpeg",
+      width: 100%,
+      height: 9.6cm,
+      fit: "contain",
+    )
+  ]
+]
+
+#slide(title: "Anexo: circuito de control", tag: "ANEXO · CIRCUITO")[
+  #align(center)[
+    #image(
+      "imgs/Circuitos/Control.jpeg",
+      width: 100%,
+      height: 9.6cm,
+      fit: "contain",
+    )
+  ]
+]
+
+#slide(title: "Anexo: circuito de salida", tag: "ANEXO · CIRCUITO")[
+  #align(center)[
+    #image(
+      "imgs/Circuitos/Output.jpeg",
+      width: 100%,
+      height: 9.6cm,
+      fit: "contain",
+    )
+  ]
+]
+
+#slide(title: "Anexo: detalle del FIR", tag: "ANEXO · DETALLE")[
+  #align(center)[
+    #image(
+      "imgs/Circuitos/FIR.png",
+      width: 100%,
+      height: 9.4cm,
+      fit: "contain",
+    )
+  ]
+]
+
+#slide(title: "Anexo: detalle del pseudo-CLA de 5 bits", tag: "ANEXO · DETALLE")[
+  #align(center)[
+    #image(
+      "imgs/Circuitos/pseudo CLA 5b.png",
+      width: 100%,
+      height: 9.4cm,
+      fit: "contain",
+    )
+  ]
+]
+
+#slide(title: "Anexo: detalle del contador de 2 bits", tag: "ANEXO · DETALLE")[
+  #align(center)[
+    #image(
+      "imgs/Circuitos/2b counter.png",
+      width: 100%,
+      height: 9.4cm,
+      fit: "contain",
+    )
+  ]
+]
+
+#slide(title: "Anexo: detalle del SDFF_improved", tag: "ANEXO · DETALLE")[
+  #align(center)[
+    #image(
+      "imgs/Circuitos/SDFF_improved.png",
+      width: 100%,
+      height: 9.4cm,
+      fit: "contain",
+    )
+  ]
+]
+
 #slide(title: "Anexo: barrido de alpha en pseudo-CLA", tag: "ANEXO")[
   #grid(columns: (1fr, 1fr), gutter: 13pt,
     img-card(
